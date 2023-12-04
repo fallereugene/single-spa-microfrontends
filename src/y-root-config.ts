@@ -36,6 +36,7 @@ const bootstrap = (layout: Element) => {
         services: {},
         asEmbeddedSystem: true,
         value: "passed value from host application",
+        containerIdentifier: "single-spa-content",
       },
     });
   });
@@ -49,6 +50,17 @@ const bootstrap = (layout: Element) => {
   });
 
   start();
+
+  const setConsentState = ({ data }) => {
+    try {
+      const { consent } = JSON.parse(data);
+      if (typeof consent !== undefined) {
+        (window as any).isConsentAccepted = consent;
+      }
+    } catch (e) {}
+  };
+
+  window.addEventListener("message", setConsentState);
 };
 
 Promise.all([getDynamicMenuInfo(), getDynamicContent()]).then(
@@ -60,7 +72,7 @@ Promise.all([getDynamicMenuInfo(), getDynamicContent()]).then(
       </section>
       <section id="single-spa-content">
         <route default loader="yeah">
-          <p>This example project shows independently built and deployed microfrontends that use React and single-spa. Each sidebar navigation link loads a different microfrontend.</p>
+          <section>This example project shows independently built and deployed microfrontends that use React and single-spa. Each sidebar navigation link loads a different microfrontend.</section>
         </route>
         ${generateLayout(content)}
       </section>
